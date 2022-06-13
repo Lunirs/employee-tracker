@@ -37,14 +37,14 @@ CREATE TABLE employees(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    manager_id INT NOT NULL,
-    role_id INT NOT NULL, 
+    managers_id INT,
+    roles_id INT NOT NULL, 
     FOREIGN KEY (roles_id)
     REFERENCES roles(id)
-    ON DELETE CASCADE;
+    ON DELETE CASCADE,
     FOREIGN KEY (managers_id)
     REFERENCES employees(id)
-    ON DELETE CASCADE;
+    ON DELETE CASCADE
 );
 
 
