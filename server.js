@@ -50,11 +50,30 @@ const questions = () => {
           viewAllEmployees();
           break;
 
-        // Need function to see all roles
-        // Need function to see all departments
-        // Need function to add new role
-        // Need function to add new department
-        // Need function to update employee role
+        case "View all roles":
+          // Need function to see all roles
+          viewAllRoles();
+          break;
+
+        case "View all departments":
+          // Need function to see all departments
+          viewAllDepartments();
+          break;
+
+        case "Add a new role":
+          // Need function to add new role
+          addNewRole();
+          break;
+
+        case "Add a new department":
+          // Need function to add new department
+          addNewDepartment();
+          break;
+
+        case "Update employee role":
+          // Need function to update employee role
+          updateEmployeeRole();
+          break;
       }
     });
 };
