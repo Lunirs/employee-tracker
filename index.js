@@ -12,7 +12,7 @@ const db = mysql.createConnection(
   {
     host: "localhost",
     user: process.env.DB_USER,
-    password: process.env.DB_PASS,
+    password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
   },
   console.log("Database successfully connected")
@@ -89,29 +89,37 @@ const questions = () => {
 };
 
 // functions I needed in switch case
-
 // function to see all employees
 const viewAllEmployees = () => {
-  db.query("SELECT * FROM employees", (err, results) => {
-    if (err) throw err;
-    console.log("Viewing Employees");
-    console.table(results);
+  db.query(
+    `SELECT employees.id, employees.first_name, employees.last_name, roles.role, departments.name AS department, roles.salary, employees.managers_id AS manager_name
+  FROM departments
+  JOIN roles ON departments.id = roles.departments_id
+  JOIN employees ON roles.id = employees.roles_id`,
+    (err, results) => {
+      if (err) throw err;
+      console.log("Viewing Employees");
+      console.table(results);
 
-    // rerun initial inquirer for users to choose another choice
-    questions();
-  });
+      // rerun initial inquirer for users to choose another choice
+      questions();
+    }
+  );
 };
 
 // function to see all roles
 const viewAllRoles = () => {
-  db.query("SELECT * FROM roles", (err, results) => {
-    if (err) throw err;
-    console.log("Viewing Roles");
-    console.table(results);
+  db.query(
+    "SELECT roles.id, roles.role, departments.name AS department, roles.salary FROM roles JOIN departments ON  roles.departments_id = departments.id",
+    (err, results) => {
+      if (err) throw err;
+      console.log("Viewing Roles");
+      console.table(results);
 
-    // rerun initial inquirer for users to choose another choice
-    questions();
-  });
+      // rerun initial inquirer for users to choose another choice
+      questions();
+    }
+  );
 };
 
 // function to see all departments

@@ -46,8 +46,3 @@ CREATE TABLE employees(
     REFERENCES employees(id)
     ON DELETE CASCADE
 );
-
-
-
-
-
