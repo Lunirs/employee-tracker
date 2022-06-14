@@ -5,6 +5,7 @@ require("dotenv").config();
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const consoleTable = require("console.table");
+const { response } = require("express");
 
 // Creating a connection with my database
 
@@ -60,6 +61,11 @@ const questions = () => {
           viewAllDepartments();
           break;
 
+        case "Add a new employee":
+          // Need function to add new employee
+          addNewEmployee();
+          break;
+
         case "Add a new role":
           // Need function to add new role
           addNewRole();
@@ -109,6 +115,7 @@ const viewAllDepartments = () => {
   db.query("SELECT * FROM departments", (err, results) => {
     if (err) throw err;
     console.log("Viewing Departments");
+    console.log(results);
     console.table(results);
 
     // rerun initial inquirer for users to choose another choice
@@ -116,8 +123,75 @@ const viewAllDepartments = () => {
   });
 };
 
+// function to add a new employee
+const addNewEmployee = () => {};
+
 // function to add a new role
-const addNewRole = () => {};
+const addNewRole = () => {
+  db.query("SELECT * FROM departments", (err, response) => {
+    if (err) throw err;
+    console.log(response);
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Please specify the role are you adding.",
+          name: "role",
+          validate: (response) => {
+            if (response) {
+              return true;
+            } else {
+              console.log("You cannot leave this portion blank.");
+            }
+          },
+        },
+        {
+          type: "input",
+          message: "Please specify the salary for this new role.",
+          name: "salary",
+          validate: (response) => {
+            if (response) {
+              return true;
+            } else {
+              console.log("You cannot leave this portion blank.");
+            }
+          },
+        },
+        {
+          type: "list",
+          message: "Please specify the department this new role belongs to.",
+          choices: () => {
+            const options = [];
+            for (let i = 0; i < response.length; i++) {
+              options.push(response[i].name);
+            }
+            return options;
+          },
+          name: "department",
+        },
+      ])
+      .then((data) => {
+        let departmentId;
+        for (let i = 0; i < response.length; i++) {
+          if (response[i].name === data.department) {
+            departmentId = response[i];
+          }
+        }
+
+        let role = data.role;
+        let salary = data.salary;
+        let department_id = departmentId.id;
+        db.query(
+          `INSERT INTO roles (role, salary, departments_id) VALUES ("${role}", ${salary}, ${department_id});`,
+          (err) => {
+            if (err) throw err;
+            console.log("The new role has been successfully added");
+            questions();
+          }
+        );
+      });
+  });
+};
 
 // function to add a new department
 const addNewDepartment = () => {
