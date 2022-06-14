@@ -78,4 +78,51 @@ const questions = () => {
     });
 };
 
+// functions I needed in switch case
+
+// function to see all employees
+const viewAllEmployees = () => {
+  db.query("SELECT * FROM employees", (err, results) => {
+    if (err) throw err;
+    console.log("Viewing Employees");
+    console.table(results);
+
+    // rerun initial inquirer for users to choose another choice
+    questions();
+  });
+};
+
+// function to see all roles
+const viewAllRoles = () => {
+  db.query("SELECT * FROM roles", (err, results) => {
+    if (err) throw err;
+    console.log("Viewing Roles");
+    console.table(results);
+
+    // rerun initial inquirer for users to choose another choice
+    questions();
+  });
+};
+
+// function to see all departments
+const viewAllDepartments = () => {
+  db.query("SELECT * FROM departments", (err, results) => {
+    if (err) throw err;
+    console.log("Viewing Departments");
+    console.table(results);
+
+    // rerun initial inquirer for users to choose another choice
+    questions();
+  });
+};
+
+// function to add a new role
+const addNewRole = () => {};
+
+// function to add a new department
+const addNewDepartment = () => {};
+
+// function to update employee role
+const updateEmployeeRole = () => {};
+
 init();
