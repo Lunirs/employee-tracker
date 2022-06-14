@@ -6,6 +6,7 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const consoleTable = require("console.table");
 const { response } = require("express");
+const e = require("express");
 
 // Creating a connection with my database
 
@@ -33,7 +34,7 @@ const questions = () => {
           "View all employees",
           "View all roles",
           "View all departments",
-          "Add an employee",
+          "Add a new employee",
           "Add a new role",
           "Add a new department",
           "Update employee role",
@@ -63,17 +64,17 @@ const questions = () => {
 
         case "Add a new employee":
           // Need function to add new employee
-          addNewEmployee();
+          addEmployee();
           break;
 
         case "Add a new role":
           // Need function to add new role
-          addNewRole();
+          addRole();
           break;
 
         case "Add a new department":
           // Need function to add new department
-          addNewDepartment();
+          addDepartment();
           break;
 
         case "Update employee role":
@@ -124,10 +125,107 @@ const viewAllDepartments = () => {
 };
 
 // function to add a new employee
-const addNewEmployee = () => {};
+// you left off here
+// need to get response from employee query
+const addEmployee = () => {
+  db.query("SELECT * FROM employees", (err, eResponse) => {
+    if (err) throw err;
+
+    db.query("SELECT * FROM roles", (err, rResponse) => {
+      if (err) throw err;
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            message: "What is the new employee's first name?",
+            name: "firstName",
+            validate: (response) => {
+              if (response) {
+                return true;
+              } else {
+                console.log("You cannot leave this portion blank.");
+              }
+            },
+          },
+          {
+            type: "input",
+            message: "What is the new employee's last name?",
+            name: "lastName",
+            validate: (response) => {
+              if (response) {
+                return true;
+              } else {
+                console.log("You cannot leave this portion blank.");
+              }
+            },
+          },
+          {
+            type: "list",
+            message: "Who is the new employee's manager?",
+            name: "manager",
+            choices: () => {
+              const options = [];
+              for (let i = 0; i < eResponse.length; i++) {
+                options.push(
+                  `${eResponse[i].first_name} ${eResponse[i].last_name}`
+                );
+              }
+              return options;
+            },
+          },
+          {
+            type: "list",
+            message: "What is the new employee's role?",
+            name: "role",
+            choices: () => {
+              const options = [];
+              for (let i = 0; i < rResponse.length; i++) {
+                options.push(rResponse[i].role);
+              }
+              return options;
+            },
+          },
+        ])
+        .then((data) => {
+          let roleId;
+          for (let i = 0; i < rResponse.length; i++) {
+            if (rResponse[i].role === data.role) {
+              roleId = rResponse[i];
+            }
+          }
+
+          let managerId;
+          for (let i = 0; i < eResponse.length; i++) {
+            if (
+              `${eResponse[i].first_name} ${eResponse[i].last_name}` ===
+              data.manager
+            ) {
+              managerId = eResponse[i];
+            }
+          }
+
+          let firstName = data.firstName;
+          let lastName = data.lastName;
+          let roles_id = roleId.id;
+          let managers_id = managerId.id;
+
+          db.query(
+            `INSERT INTO employees(first_name, last_name, managers_id, roles_id) VALUES ("${firstName}", "${lastName}", ${managers_id}, ${roles_id})`,
+            (err) => {
+              if (err) throw err;
+              console.log(
+                "The new employee has been successfully added to the database"
+              );
+              questions();
+            }
+          );
+        });
+    });
+  });
+};
 
 // function to add a new role
-const addNewRole = () => {
+const addRole = () => {
   db.query("SELECT * FROM departments", (err, response) => {
     if (err) throw err;
     console.log(response);
@@ -194,7 +292,7 @@ const addNewRole = () => {
 };
 
 // function to add a new department
-const addNewDepartment = () => {
+const addDepartment = () => {
   inquirer
     .prompt([
       {
