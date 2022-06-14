@@ -5,8 +5,6 @@ require("dotenv").config();
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const consoleTable = require("console.table");
-const { response } = require("express");
-const e = require("express");
 
 // Creating a connection with my database
 
@@ -125,7 +123,7 @@ const viewAllDepartments = () => {
 };
 
 // function to add a new employee
-// you left off here
+
 // need to get response from employee query
 const addEmployee = () => {
   db.query("SELECT * FROM employees", (err, eResponse) => {
