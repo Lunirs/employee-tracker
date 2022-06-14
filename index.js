@@ -92,7 +92,7 @@ const questions = () => {
 // function to see all employees
 const viewAllEmployees = () => {
   db.query(
-    `SELECT employees.id, employees.first_name, employees.last_name, roles.role, departments.name AS department, roles.salary, employees.managers_id AS manager_name
+    `SELECT employees.id, employees.first_name, employees.last_name, roles.role, departments.name AS department, roles.salary, employees.managers_id AS manager_id
   FROM departments
   JOIN roles ON departments.id = roles.departments_id
   JOIN employees ON roles.id = employees.roles_id`,
