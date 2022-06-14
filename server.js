@@ -120,7 +120,36 @@ const viewAllDepartments = () => {
 const addNewRole = () => {};
 
 // function to add a new department
-const addNewDepartment = () => {};
+const addNewDepartment = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Please specify the new department's name.",
+        validate: (department) => {
+          if (department) {
+            return true;
+          } else {
+            console.log("You cannot leave this portion blank.");
+          }
+        },
+        name: "department",
+      },
+    ])
+    .then((response) => {
+      const { department } = response;
+      db.query(
+        `INSERT INTO departments(name) VALUES ("${department}")`,
+        (err) => {
+          if (err) throw err;
+          console.log(
+            `${department} has successfully been added as a new department.`
+          );
+          questions();
+        }
+      );
+    });
+};
 
 // function to update employee role
 const updateEmployeeRole = () => {};
