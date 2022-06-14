@@ -127,7 +127,6 @@ const viewAllDepartments = () => {
   db.query("SELECT * FROM departments", (err, results) => {
     if (err) throw err;
     console.log("Viewing Departments");
-    console.log(results);
     console.table(results);
 
     // rerun initial inquirer for users to choose another choice
@@ -139,11 +138,14 @@ const viewAllDepartments = () => {
 
 // need to get response from employee query
 const addEmployee = () => {
+  // getting all of the data in employees table
   db.query("SELECT * FROM employees", (err, eResponse) => {
     if (err) throw err;
 
+    // getting all of the data from the roles table
     db.query("SELECT * FROM roles", (err, rResponse) => {
       if (err) throw err;
+      // inquirer prompt to add new employee
       inquirer
         .prompt([
           {
@@ -174,6 +176,7 @@ const addEmployee = () => {
             type: "list",
             message: "Who is the new employee's manager?",
             name: "manager",
+            // dynamically generate the choice option array utilizing response from getting all of the EMPLOYEE query
             choices: () => {
               const options = [];
               for (let i = 0; i < eResponse.length; i++) {
@@ -188,6 +191,7 @@ const addEmployee = () => {
             type: "list",
             message: "What is the new employee's role?",
             name: "role",
+            // dyamically generate the choice options array utilizing the response from getting all of the ROLES query
             choices: () => {
               const options = [];
               for (let i = 0; i < rResponse.length; i++) {
@@ -198,15 +202,20 @@ const addEmployee = () => {
           },
         ])
         .then((data) => {
+          // generate a new variable that will store the object from ROLE query response to call upon later
           let roleId;
+          // iterate through array of objects of ROLE query response
           for (let i = 0; i < rResponse.length; i++) {
+            // if the name value of the response equals the role specified from inquirer we store that object into previously defined variable
             if (rResponse[i].role === data.role) {
               roleId = rResponse[i];
             }
           }
-
+          //generate a new variable that will store the object from EMPLOYEE query response to call upon later
           let managerId;
+          // iterate through array of objects of EMPLOYEE query response
           for (let i = 0; i < eResponse.length; i++) {
+            // if the concated name is equal to the name the user chose from inquirer, store that object into the previously defined variable
             if (
               `${eResponse[i].first_name} ${eResponse[i].last_name}` ===
               data.manager
@@ -215,11 +224,13 @@ const addEmployee = () => {
             }
           }
 
+          // variables defined with values we want to insert into the query
           let firstName = data.firstName;
           let lastName = data.lastName;
           let roles_id = roleId.id;
           let managers_id = managerId.id;
 
+          // takes the values from the variables and puts it into a query to insert a new employee
           db.query(
             `INSERT INTO employees(first_name, last_name, managers_id, roles_id) VALUES ("${firstName}", "${lastName}", ${managers_id}, ${roles_id})`,
             (err) => {
@@ -237,9 +248,11 @@ const addEmployee = () => {
 
 // function to add a new role
 const addRole = () => {
+  // query to get all of the data from departments table
   db.query("SELECT * FROM departments", (err, response) => {
     if (err) throw err;
-    console.log(response);
+
+    // inquirer to ask about the new role.
     inquirer
       .prompt([
         {
@@ -269,6 +282,7 @@ const addRole = () => {
         {
           type: "list",
           message: "Please specify the department this new role belongs to.",
+          // dyamically generate the choice options array utilizing the response from getting all of the DEPARTMENTS query
           choices: () => {
             const options = [];
             for (let i = 0; i < response.length; i++) {
@@ -280,16 +294,21 @@ const addRole = () => {
         },
       ])
       .then((data) => {
+        // generate a new variable that will store the object from DEPARTMENTS query response to call upon later
         let departmentId;
+        // iterate through array of objects of DEPARTMENTS query response
         for (let i = 0; i < response.length; i++) {
+          // if the name value of the response equals the department specified from inquirer we store that object into previously defined variable
           if (response[i].name === data.department) {
             departmentId = response[i];
           }
         }
 
+        // variables defined with values we want to insert into the query
         let role = data.role;
         let salary = data.salary;
         let department_id = departmentId.id;
+        // takes the values from the variables and puts it into a query to insert a new role
         db.query(
           `INSERT INTO roles (role, salary, departments_id) VALUES ("${role}", ${salary}, ${department_id});`,
           (err) => {
@@ -304,6 +323,7 @@ const addRole = () => {
 
 // function to add a new department
 const addDepartment = () => {
+  // inquirer prompt to ask questions
   inquirer
     .prompt([
       {
@@ -320,7 +340,9 @@ const addDepartment = () => {
       },
     ])
     .then((response) => {
+      // answer from inquirer response
       const { department } = response;
+      // add value of department from response into the query to insert a new department.
       db.query(
         `INSERT INTO departments(name) VALUES ("${department}")`,
         (err) => {
@@ -336,17 +358,21 @@ const addDepartment = () => {
 
 // function to update employee role
 const updateEmployeeRole = () => {
+  // getting all of the data in employees table
   db.query("SELECT * FROM employees", (err, eResponse) => {
     if (err) throw err;
+    // getting all of the data from the roles table
     db.query("SELECT * FROM roles", (err, rResponse) => {
       if (err) throw err;
 
+      // inquirer prompt to update an employee
       inquirer
         .prompt([
           {
             type: "list",
             message: "Which employee's role do you need to update?",
             name: "employee",
+            // dynamically generate the choice option array utilizing response from getting all of the EMPLOYEE query
             choices: () => {
               const options = [];
               for (let i = 0; i < eResponse.length; i++) {
@@ -362,6 +388,7 @@ const updateEmployeeRole = () => {
             message: "What is this employee's new role?",
             name: "role",
             choices: () => {
+              // dyamically generate the choice options array utilizing the response from getting all of the ROLES query
               const options = [];
               for (let i = 0; i < rResponse.length; i++) {
                 options.push(rResponse[i].role);
@@ -371,16 +398,20 @@ const updateEmployeeRole = () => {
           },
         ])
         .then((data) => {
-          console.log(data);
+          // generate a new variable that will store the object from ROLE query response to call upon later
           let roleId;
+          // iterate through array of objects of ROLE query response
           for (let i = 0; i < rResponse.length; i++) {
+            // if the name value of the response equals the role specified from inquirer we store that object into previously defined variable
             if (rResponse[i].role === data.role) {
               roleId = rResponse[i];
             }
           }
-
+          //generate a new variable that will store the object from EMPLOYEE query response to call upon later
           let employeeId;
+          // iterate through array of objects of EMPLOYEE query response
           for (let i = 0; i < eResponse.length; i++) {
+            // if the concated name is equal to the name the user chose from inquirer, store that object into the previously defined variable
             if (
               `${eResponse[i].first_name} ${eResponse[i].last_name}` ===
               data.employee
@@ -388,10 +419,10 @@ const updateEmployeeRole = () => {
               employeeId = eResponse[i];
             }
           }
-
+          // variables defined with values we want to insert into the query
           let roles_id = roleId.id;
           let employees_id = employeeId.id;
-
+          // takes the values from the variables and puts it into a query to update an employee
           db.query(
             `UPDATE employees SET roles_id = ${roles_id} WHERE id = ${employees_id}`,
             (err) => {
@@ -406,4 +437,5 @@ const updateEmployeeRole = () => {
   });
 };
 
+// initialize inquirer
 init();
