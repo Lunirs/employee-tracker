@@ -36,6 +36,7 @@ const questions = () => {
           "Add a new role",
           "Add a new department",
           "Update employee role",
+          "Quit",
         ],
         name: "userChoice",
       },
@@ -79,6 +80,10 @@ const questions = () => {
           // Need function to update employee role
           updateEmployeeRole();
           break;
+
+        case "Quit":
+          console.log("See you next time!");
+          process.exit();
       }
     });
 };
@@ -322,6 +327,75 @@ const addDepartment = () => {
 };
 
 // function to update employee role
-const updateEmployeeRole = () => {};
+const updateEmployeeRole = () => {
+  db.query("SELECT * FROM employees", (err, eResponse) => {
+    if (err) throw err;
+    db.query("SELECT * FROM roles", (err, rResponse) => {
+      if (err) throw err;
+
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Which employee's role do you need to update?",
+            name: "employee",
+            choices: () => {
+              const options = [];
+              for (let i = 0; i < eResponse.length; i++) {
+                options.push(
+                  `${eResponse[i].first_name} ${eResponse[i].last_name}`
+                );
+              }
+              return options;
+            },
+          },
+          {
+            type: "list",
+            message: "What is this employee's new role?",
+            name: "role",
+            choices: () => {
+              const options = [];
+              for (let i = 0; i < rResponse.length; i++) {
+                options.push(rResponse[i].role);
+              }
+              return options;
+            },
+          },
+        ])
+        .then((data) => {
+          console.log(data);
+          let roleId;
+          for (let i = 0; i < rResponse.length; i++) {
+            if (rResponse[i].role === data.role) {
+              roleId = rResponse[i];
+            }
+          }
+
+          let employeeId;
+          for (let i = 0; i < eResponse.length; i++) {
+            if (
+              `${eResponse[i].first_name} ${eResponse[i].last_name}` ===
+              data.employee
+            ) {
+              employeeId = eResponse[i];
+            }
+          }
+
+          let roles_id = roleId.id;
+          let employees_id = employeeId.id;
+
+          db.query(
+            `UPDATE employees SET roles_id = ${roles_id} WHERE id = ${employees_id}`,
+            (err) => {
+              if (err) throw err;
+              console.log("The employee was successfully updated");
+
+              questions();
+            }
+          );
+        });
+    });
+  });
+};
 
 init();
