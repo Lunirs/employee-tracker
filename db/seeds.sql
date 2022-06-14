@@ -8,7 +8,7 @@ VALUE ("Engineering"),
       ("Sales");
 
 -- adding initial data into roles table
---each id will be automatically generated so we only pass the role, salary, department_id foreign key
+-- each id will be automatically generated so we only pass the role, salary, department_id foreign key
 
 INSERT INTO roles (role, salary, departments_id)
 VALUE ("Lead Engineer", 150000, 1),

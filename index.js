@@ -5,7 +5,17 @@ require("dotenv").config();
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const consoleTable = require("console.table");
+const figlet = require("figlet");
 
+console.log(
+  figlet.textSync("Employee Database!", {
+    font: "Doom",
+    horizontalLayout: "default",
+    verticalLayout: "default",
+    width: 80,
+    whitespaceBreak: true,
+  })
+);
 // Creating a connection with my database
 
 const db = mysql.createConnection(
@@ -20,7 +30,6 @@ const db = mysql.createConnection(
 
 // initialization function that will run at load and start up initial inquirer
 const init = () => questions();
-
 // initial inquirer  prompting them on the things they can do with app.
 const questions = () => {
   inquirer
