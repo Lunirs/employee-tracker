@@ -12,7 +12,7 @@ This project currently only supports viewing (all employees, all departments, al
 
 Further development of this project will support departure of employees, management changes, etc.
 
-If you would like to see how this application works, please click [here](https://www.youtube.com/watch?v=pCEVAsho45k) to check out the demo video!
+If you would like to see how this application works, please click [here](https://www.youtube.com/watch?v=wlRpyGoSOtw) to check out the demo video!
 
 ## Table of Contents
 
