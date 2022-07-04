@@ -101,10 +101,11 @@ const questions = () => {
 // function to see all employees
 const viewAllEmployees = () => {
   db.query(
-    `SELECT employees.id, employees.first_name, employees.last_name, roles.role, departments.name AS department, roles.salary, employees.managers_id AS manager_id
-  FROM departments
-  JOIN roles ON departments.id = roles.departments_id
-  JOIN employees ON roles.id = employees.roles_id`,
+    `SELECT employees.id, employees.first_name, employees.last_name, roles.role, departments.name AS department, roles.salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager
+    FROM employees
+    LEFT JOIN roles ON employees.roles_id = roles.id
+    LEFT JOIN departments ON roles.departments_id = departments.id
+    LEFT JOIN employees manager ON employees.managers_id = manager.id `,
     (err, results) => {
       if (err) throw err;
       console.log("Viewing Employees");

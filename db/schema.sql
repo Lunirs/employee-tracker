@@ -44,5 +44,5 @@ CREATE TABLE employees(
     ON DELETE CASCADE,
     FOREIGN KEY (managers_id)
     REFERENCES employees(id)
-    ON DELETE CASCADE
+    ON DELETE SET NULL
 );
